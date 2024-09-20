@@ -1,163 +1,183 @@
-var socketio = io.connect("http://127.0.0.1:9900/leave")
+// Connect to the Socket.IO server for leave notifications
+var socketio = io.connect("http://127.0.0.1:9900/leave");
 
+// Log connection status when connected
 socketio.on('connect', () => {
-            console.log('Connected to server');
-        });
+    console.log('Connected to server');
+});
 
-        var emp_id = document.getElementById('emp_id');
-        console.log(emp_id.value)
+// Get employee ID from the HTML element
+var emp_id = document.getElementById('emp_id');
+console.log(emp_id.value); // Log the employee ID
 
-        socketio.emit('message',{'emp_id':emp_id.value, 'mgr_id':'none'})
+// Emit a message to the server with the employee ID and no manager ID
+socketio.emit('message', {'emp_id': emp_id.value, 'mgr_id': 'none'});
 
-        socketio.on('initial_notifications', (notifications) => {
-            notifications_json = JSON.parse(notifications)
-            displayNotifications(notifications_json);
-        });
+// Listen for initial notifications from the server
+socketio.on('initial_notifications', (notifications) => {
+    notifications_json = JSON.parse(notifications); // Parse the incoming JSON
+    displayNotifications(notifications_json); // Display the notifications
+});
 
-        function displayNotifications(notifications) {
-            const notificationDiv = document.getElementById('notification');
+// Function to display notifications in the UI
+function displayNotifications(notifications) {
+    const notificationDiv = document.getElementById('notification'); // Get notification container
 
-            notifications.forEach(notification => {
-                const statusClass = getStatusClass(notification.status);
-                const statusText = getStatusText(notification.status);
+    // Loop through each notification and create HTML elements
+    notifications.forEach(notification => {
+        const statusClass = getStatusClass(notification.status); // Get CSS class for status
+        const statusText = getStatusText(notification.status); // Get text for status
 
-                const notificationHTML = `
-                    <div class="notification-item">
-                        <div>
-                            <h6>Leave-Start: ${notification.start}</h6>
-                            <h6>Leave-End: ${notification.end}</h6>
-                            <h6>Leave-Subject: ${notification.subject}</h6>
-                            <h6>Leave-Reason: ${notification.reason}</h6>
-                        </div>
-                        <div>
-                            <h6 class="btn ${statusClass}">${statusText}</h6>
-                        </div>
-                    </div>
-                `;
+        // Create new notification HTML
+        const notificationHTML = `
+            <div class="notification-item">
+                <div>
+                    <h6>Leave-Start: ${notification.start}</h6>
+                    <h6>Leave-End: ${notification.end}</h6>
+                    <h6>Leave-Subject: ${notification.subject}</h6>
+                    <h6>Leave-Reason: ${notification.reason}</h6>
+                </div>
+                <div>
+                    <h6 class="btn ${statusClass}">${statusText}</h6>
+                </div>
+            </div>
+        `;
 
-                notificationDiv.innerHTML += notificationHTML;
-            });
-        }
+        // Append new notification to the notification div
+        notificationDiv.innerHTML += notificationHTML;
+    });
+}
 
-        function getStatusClass(status) {
-            if (status === null) {
-                return 'btn-warning';
-            } else if (status === 'False') {
-                return 'btn-danger';
-            } else {
-                return 'btn-success';
-            }
-        }
+// Function to get the appropriate CSS class based on leave status
+function getStatusClass(status) {
+    if (status === null) {
+        return 'btn-warning'; // Pending status
+    } else if (status === 'False') {
+        return 'btn-danger'; // Rejected status
+    } else {
+        return 'btn-success'; // Approved status
+    }
+}
 
-        function getStatusText(status) {
-            if (status === null) {
-                return 'Pending';
-            } else if (status === 'False') {
-                return 'Rejected';
-            } else {
-                return 'Approved';
-            }
-        }
+// Function to get the display text for the status
+function getStatusText(status) {
+    if (status === null) {
+        return 'Pending'; // Text for pending
+    } else if (status === 'False') {
+        return 'Rejected'; // Text for rejected
+    } else {
+        return 'Approved'; // Text for approved
+    }
+}
 
-
-
-
-
-
-
-
-
-
+// Function to handle link click and disable attendance link temporarily
 function handleLinkClick() {
     var link = document.getElementById('attendance_disable');
-    link.style.display = 'none';
+    link.style.display = 'none'; // Hide the link
 
-    var now = new Date().getTime();
-    localStorage.setItem('linkClickedTime', now.toString());
+    var now = new Date().getTime(); // Get current time
+    localStorage.setItem('linkClickedTime', now.toString()); // Store click time
 
+    // Re-enable the link after 10 seconds
     setTimeout(function() {
         enableLink();
     }, 10000);
 }
 
+// Function to enable the attendance link again
 function enableLink() {
     var link = document.getElementById('attendance_disable');
-    link.style.display = 'block';
-
-    localStorage.removeItem('linkClickedTime');
+    link.style.display = 'block'; // Show the link again
+    localStorage.removeItem('linkClickedTime'); // Clear stored click time
 }
 
+// Run when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     var link = document.getElementById('attendance_disable');
-    var linkClickedTime = localStorage.getItem('linkClickedTime');
+    var linkClickedTime = localStorage.getItem('linkClickedTime'); // Get stored click time
 
+    // Check if the link was clicked recently
     if (linkClickedTime) {
         var clickedTimestamp = parseInt(linkClickedTime, 10);
         var now = new Date().getTime();
 
+        // If clicked within the last 10 seconds, disable the link
         if (now - clickedTimestamp < 10000) {
-            link.style.display = 'none';
+            link.style.display = 'none'; // Hide link
 
-            var timeLeft = 10000 - (now - clickedTimestamp);
+            var timeLeft = 10000 - (now - clickedTimestamp); // Calculate time left
+            // Re-enable the link after the remaining time
             setTimeout(function() {
                 enableLink();
             }, timeLeft);
         } else {
-            enableLink();
+            enableLink(); // If time expired, enable link
         }
     } else {
-        link.style.display = 'block';
+        link.style.display = 'block'; // If never clicked, show link
     }
 });
 
+// Variable to track currently displayed div
+var currentDiv = null;
 
-    var currentDiv = null;
+// Function to show/hide elements based on their IDs
+function showhide(id) {
+    var element = document.getElementById(id);
 
-    function showhide(id) {
-        var element = document.getElementById(id);
-
-        if (element.style.display == 'block') {
-                element.style.display = 'none';
-        } else {
-            if (currentDiv !== null) {
-                currentDiv.style.display = 'none';
-            }
-
-            element.style.display = 'block';
-            currentDiv = element;
+    // Toggle visibility of the element
+    if (element.style.display == 'block') {
+        element.style.display = 'none';
+    } else {
+        // Hide the previously displayed div if applicable
+        if (currentDiv !== null) {
+            currentDiv.style.display = 'none';
         }
-        if (id == 'notification'){
-            var icon = document.getElementById('display_number');
-            icon.style.display = 'none';
-        }
+
+        // Show the current element
+        element.style.display = 'block';
+        currentDiv = element; // Update currentDiv to the new element
     }
 
-    $(window).on('load', function(){
+    // Special handling for notification display
+    if (id == 'notification') {
+        var icon = document.getElementById('display_number');
+        icon.style.display = 'none'; // Hide notification icon when displayed
+    }
+}
 
+// Run on window load
+$(window).on('load', function() {
     var element = document.getElementById('emp_details');
-    element.style.display = 'block';
-    currentDiv = element;
-    });
+    element.style.display = 'block'; // Show employee details on load
+    currentDiv = element; // Set currentDiv to employee details
+});
 
-       function updateNotificationCount(currentCount) {
-          const badgeNumberElement = document.getElementById('badge_number');
-          const displayNumberElement = document.getElementById('display_number');
+// Function to update the notification count displayed in the UI
+function updateNotificationCount(currentCount) {
+    const badgeNumberElement = document.getElementById('badge_number');
+    const displayNumberElement = document.getElementById('display_number');
 
-          let previousCount = parseInt(localStorage.getItem('previousCountEmployee'), 10) || currentCount;
+    // Get the previous count from local storage
+    let previousCount = parseInt(localStorage.getItem('previousCountEmployee'), 10) || currentCount;
 
-          const difference = currentCount - previousCount;
+    // Calculate the difference
+    const difference = currentCount - previousCount;
 
-          displayNumberElement.textContent = difference;
+    // Update the displayed number for new notifications
+    displayNumberElement.textContent = difference;
 
-          if (difference !== 0) {
-            displayNumberElement.style.display = 'inline-block';
-          } else {
-            displayNumberElement.style.display = 'none';
-          }
+    // Show or hide the display number based on the difference
+    if (difference !== 0) {
+        displayNumberElement.style.display = 'inline-block'; // Show the badge
+    } else {
+        displayNumberElement.style.display = 'none'; // Hide if no new notifications
+    }
 
-          localStorage.setItem('previousCountEmployee', currentCount);
-        }
+    // Store the current count in local storage
+    localStorage.setItem('previousCountEmployee', currentCount);
+}
 
-    const currentCount = parseInt(document.getElementById('badge_number').textContent.trim(), 10);
-
-    updateNotificationCount(currentCount);
+// Initialize notification count
+const currentCount = parseInt(document.getElementById('badge_number').textContent.trim(), 10);
+updateNotificationCount(currentCount); // Update notification count on page load
