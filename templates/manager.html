@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>manager</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script
+        src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous">
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a href="javascript:showhide('emp_details')" class="nav-link">Employees</a>
+        <a href="javascript:showhide('mgr_details')" class="nav-link">My Profile</a>
+        <div class="icon">
+          <a href="javascript:showhide('notification')" class="nav-link">Notifications</a>
+          <span id="badge_number" style="display:None;">{{count}}</span>
+          <span class="badge" id="display_number"></span>
+        </div>
+        <a href="javascript:showhide('ex_employees')" class="nav-link">Ex-Employees</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+        <input id="mgr_id" name="mgr_id" value="{{manager_data.mgr_id}}" style="display:None;">
+
+
+<div id="emp_details" style="display:None; width:80%; margin:auto;">
+       <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Emp-Id</th>
+                    <th scope="col">Emp-Name</th>
+                    <th scope="col">Emp-Email</th>
+                    <th scope="col">Experience</th>
+                    <th scope="col">Skill</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Tasks</th>
+
+                </tr>
+            </thead>
+           <tbody>
+
+           {% for emp_data in employees %}
+           <tr>
+               <td>{{loop.index}}</td>
+               <td>{{emp_data.emp_id}}</td>
+               <td>{{emp_data.emp_name}}</td>
+               <td>{{emp_data.emp_email}}</td>
+               <td>{{emp_data.experience}} Year</td>
+               <td>{{emp_data.skills}}</td>
+               <td>{{emp_data.designation}}</td>
+                <td>
+                    <a class="btn btn-warning" href="/add_task/{{emp_data.emp_id}}/{{manager_data.mgr_id}}">Add</a>
+                    <a class="btn btn-success" href="/task/{{emp_data.emp_id}}">View</a>
+                </td>
+           </tr>
+           {% endfor %}
+           </tbody>
+       </table>
+</div>
+<div id="mgr_details" class="details-container">
+    <p><b>Manager-Id: </b>{{manager_data.mgr_id}}</p>
+    <p><b>Manager-Name: </b>{{manager_data.mgr_name}}</p>
+    <p><b>Manager-Email: </b>{{manager_data.mgr_email}}</p>
+</div>
+<div id="notification" style="display:None; width:50%; margin:auto;">
+<!--    {% if notifications %}-->
+<!--    {% for notification in notifications %}-->
+<!--        <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-between;">-->
+<!--            <div>-->
+<!--                <h6>Employee-ID: {{notification.emp_id}}</h6>-->
+<!--                <h6>Leave-Start: {{notification.start}}</h6>-->
+<!--                <h6>Leave-End: {{notification.end}}</h6>-->
+<!--                <h6>Leave-Subject: {{notification.subject}}</h6>-->
+<!--                <h6>Leave-Reason: {{notification.reason}}</h6>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <a class="btn btn-danger" href="/leave_status/{{notification.leave_id}}/False/{{manager_data.mgr_id}}" onclick="return confirm('Reject Leave.')">Reject</a>-->
+<!--                <a class="btn btn-success" href="/leave_status/{{notification.leave_id}}/True/{{manager_data.mgr_id}}" onclick="return confirm('Approve Leave.')">Approve</a>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--    {% else %}-->
+<!--    <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-between;"><h6 style="color:red">No Notifications</h6></div>-->
+<!--    {% endif %}-->
+</div>
+<div id="ex_employees" style="display:None; width:80%; margin:auto;">
+       <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Emp-Id</th>
+                    <th scope="col">Emp-Name</th>
+                    <th scope="col">Emp-Email</th>
+                    <th scope="col">Experience</th>
+                    <th scope="col">Skill</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Tasks</th>
+                </tr>
+            </thead>
+           <tbody>
+
+           {% for ex_emp_data in ex_employee_data %}
+           <tr>
+               <td>{{loop.index}}</td>
+               <td>{{ex_emp_data.emp_id}}</td>
+               <td>{{ex_emp_data.emp_name}}</td>
+               <td>{{ex_emp_data.emp_email}}</td>
+               <td>{{ex_emp_data.experience}} Year</td>
+               <td>{{ex_emp_data.skills}}</td>
+               <td>{{ex_emp_data.designation}}</td>
+                <td>
+                    <a class="btn btn-success" href="/remove_task/{{ex_emp_data.emp_id}}">View</a>
+                </td>
+           </tr>
+           {% endfor %}
+           </tbody>
+       </table>
+</div>
+
+<script src="{{ url_for('static', filename='/js/manager.js') }}" type="text/javascript"></script>
+
+</body>
+</html>

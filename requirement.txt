@@ -1,0 +1,12 @@
+flask==3.0.3
+flask_restful==0.3.10
+flask_sqlalchemy==3.1.1
+flask-socketio==5.3.6
+requests==2.32.3
+redis==5.0.6
+mysqlclient==2.2.4
+pymysql==1.1.1
+flask-bcrypt==1.0.1
+cryptography==42.0.8
+elasticsearch==8.14.0
+flask_login-0.6.3

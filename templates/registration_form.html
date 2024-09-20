@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Forms</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-forms">
+        <label for="roles">Choose a Role</label>
+        <select name="role" id="roles">
+            <option id="admin_role" value="admin">Admin</option>
+            <option id="user_role" value="user">Employee</option>
+            <option id="manager_role" value="manager">Manager</option>
+        </select>
+
+        <div id="admin_form" class="form-container">
+            <h2>Admin Registration Form</h2>
+        <form action="/register/{{admin_id}}" method="POST" onsubmit="return validateForm()">
+
+            <div class="form-group">
+                <label for="admin_name">Admin Name:</label>
+                <input type="text" id="admin_name" name="admin_name" >
+                <span id="usernameError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="admin_email">Email:</label>
+                <input type="text" id="admin_email" name="admin_email" >
+                <span id="emailError" class="error"></span>
+                {% if email_error %}<h4 class="error" id="invalid_email">Email Already Exists!</h4>{% endif %}
+
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password">
+                <span id="passwordError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="text" id="confirm_password" name="confirm_password">
+                <span id="confirmPasswordError" class="error"></span>
+
+            </div>
+            <div style="display:None;"><input type="text" name="role_of" value="0"></div>
+            <button type="submit">Register</button>
+        </form>
+        </div>
+
+        <div id="user_form" class="form-container">
+            <h2>Employee Registration Form</h2>
+        <form action="/register/{{admin_id}}" method="POST" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="emp_name">Employee Name:</label>
+                <input type="text" id="emp_name" name="emp_name" >
+                <span id="EmpUsernameError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="emp_email">Email:</label>
+                <input type="text" id="emp_email" name="emp_email" >
+                <span id="EmpEmailError" class="error"></span>
+                {% if email_error %}<h4 class="error" id="invalid_emp_email">Email Already Exists!</h4>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience (years):</label>
+                <input type="number" id="experience" name="experience" required>
+            </div>
+            <div class="form-group">
+                <label for="skills">Skill:</label>
+                <input type="text" id="skills" name="skills" required>
+            </div>
+            <div class="form-group">
+                <label for="designation">Designation:</label>
+                <input type="text" id="designation" name="designation" required>
+            </div>
+            <div class="form-group">
+                <label for="manager_id">Manager ID:</label>
+                <input type="text" id="manager_id" name="manager_id">
+                {% if manager_error %}<h4 class="error" id="invalid_mgr_id">Manager Doesn't Exists!</h4>{% endif %}
+
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="EmpPassword" name="password">
+                <span id="EmpPasswordError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="text" id="EmpConfirmPassword" name="confirm_password">
+                <span id="EmpConfirmPasswordError" class="error"></span>
+
+            </div>
+            <div style="display:None;"><input type="text" name="role_of" value="1"></div>
+            <button type="submit">Register</button>
+        </form>
+        </div>
+
+        <div id="manager_form" class="form-container">
+            <h2>Manager Registration Form</h2>
+        <form action="/register/{{admin_id}}" method="POST" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="mgr_name">Manager Name:</label>
+                <input type="text" id="mgr_name" name="mgr_name" >
+                <span id="MgrNameError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="mgr_email">Email:</label>
+                <input type="text" id="mgr_email" name="mgr_email" >
+                <span id="MgrEmailError" class="error"></span>
+                {% if email_error %}<h4 class="error" id="invalid_mgr_email">Email Already Exists!</h4>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="MgrPassword" name="password">
+                <span id="MgrPasswordError" class="error"></span>
+
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="text" id="MgrConfirmPassword" name="confirm_password">
+                <span id="MgrConfirmPasswordError" class="error"></span>
+            </div>
+            <div style="display:None;"><input type="text" name="role_of" value="2"></div>
+            <button type="submit">Register</button>
+        </form>
+        </div>
+    </div>
+
+
+	<script src="{{ url_for('static', filename='/js/register.js') }}"></script>
+
+</body>
+</html>

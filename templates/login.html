@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Login</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <style>
+      .error{
+            color:red;
+      }
+  </style>
+
+</head>
+
+<body>
+<div class="registration-forms">
+        <form action="/" method="POST">
+
+            <label for="roles">Choose a Role</label>
+            <select name="role" id="roles">
+                <option id="admin_role" value="0" name="role_of">Admin</option>
+                <option id="user_role" value="1" name="role_of">Employee</option>
+                <option id="manager_role" value="2" name="role_of">Manager</option>
+            </select>
+
+            <div class="form-group">
+                <label for="user_email">Email:</label>
+                <input type="text" id="user_email" name="user_email" >
+                {% if email_error %}<h6 class="error" id="invalid_email">Email Doesn't Exists!</h6>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password">
+                {% if password_error %}<h6 class="error" id="invalid_password">Incorrect Password! </h6>{% endif %}
+            </div>
+            <div>
+                {% if other_error %}<h6 class="error" id="other_error">Something went wrong,try again! </h6>{% endif %}
+            </div>
+            <button type="submit">LOGIN</button>
+        </form>
+<script>
+    setTimeout(function() {
+        document.getElementById('invalid_email').style.display = 'none';
+        document.getElementById('invalid_password').style.display = 'none';
+        document.getElementById('other_error').style.display = 'none';
+    }, 2000);
+</script>
+
+    <br>
+</div>
+</body>
+</html>
+

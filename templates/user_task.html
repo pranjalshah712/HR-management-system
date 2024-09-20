@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+</head>
+<body>
+<div id="emp_tasks" style="width:80%; margin:auto;">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Number</th>
+                <th scope="col">Task-Id</th>
+                <th scope="col">Task-Title</th>
+                <th scope="col">Task-Detail</th>
+                <th scope="col">Task-Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task_data in tasks %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ task_data.task_id }}</td>
+                <td>{{ task_data.task_title }}</td>
+                <td>{{ task_data.task_details }}</td>
+                {% if task_data.status == None %}
+                    <td>Pending</td>
+                {% else %}
+                    <td>Completed</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

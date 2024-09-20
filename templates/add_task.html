@@ -1,0 +1,73 @@
+<head>
+<meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Login</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <style>
+      .error{
+            color:red;
+      }
+  </style>
+
+</head>
+<body>
+    <div class="registration-forms">
+        <h1>Assign Task</h1>
+        <form action="/add_task/{{emp_id}}/{{mgr_id}}" method="post" onsubmit="return validateForm()">
+
+            <div class="form-group">
+                <label for="task_title">Task-Title:</label>
+                <input type="text" id="task_title" name="task_title">
+                <span id="titleError" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="task_detail">Task-Detail:</label>
+                <input type="text" id="task_detail" name="task_detail">
+                <span id="detailError" class="error"></span>
+            </div>
+
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+    <script>
+        function validateForm() {
+
+            var task_title = document.getElementById("task_title").value;
+            var task_detail = document.getElementById("task_detail").value;
+
+            var titleregex = /^[a-zA-Z_]{3,}$/;
+            var detailregex = /^.{10,}$/;
+
+
+            var isValid = true;
+
+
+            if (!titleregex.test(task_title)) {
+                document.getElementById("titleError").innerHTML = "Task name must have at least three characters and contain only alphabets and underscores.";
+                isValid = false;
+            } else {
+                document.getElementById("titleError").innerHTML = "";
+            }
+            if (!detailregex.test(task_detail)) {
+                document.getElementById("detailError").innerHTML = "Task details must have at least 10 characters.";
+                isValid = false;
+            } else {
+                document.getElementById("detailError").innerHTML = "";
+            }
+            return isValid;
+        }
+    </script>
+</body>
+</html>
+
+
+
+

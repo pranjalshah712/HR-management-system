@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>employee</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script
+        src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <style>
+       .disabled-link {
+         opacity: 0.3;
+         color: gray;
+       }
+    </style>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a href="javascript:showhide('emp_details')" class="nav-link">My Profile</a>
+        <div class="icon">
+          <a href="javascript:showhide('notification')" class="nav-link">Notifications</a>
+          <span id="badge_number" style="display:None;">{{count}}</span>
+          <span class="badge" id="display_number"></span>
+        </div>
+        <a href="javascript:showhide('leave')" class="nav-link">Leave</a>
+        <div id="attendance_disable"><a href="/attendance/{{emp_data.emp_id}}" onclick="handleLinkClick()" class="btn btn-success">Attendance</a></div>
+        <a href="javascript:showhide('tasks')" class="nav-link">Tasks</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
+<div id="emp_details" class="details-container" >
+
+        <p><b>Emp-Id: </b>{{emp_data.emp_id}}</p>
+        <p><b>Emp-Name: </b>{{emp_data.emp_name}}</p>
+        <p><b>Emp-Email: </b>{{emp_data.emp_email}}</p>
+        <p><b>Experience: </b>{{emp_data.experience}} Year</p>
+        <p><b>Skill: </b>{{emp_data.skills}}</p>
+        <p><b>Designation: </b>{{emp_data.designation}}</p>
+        <p><b>Manager-Id: </b>{{emp_data.manager_id}}</p>
+        <p><b>Attendance: </b>{{attendance}}/365</p>
+
+    {% if success %}
+        <script>
+        setTimeout(function() {
+        document.getElementById('successMessage').style.display = 'none';
+        }, 3000); // 3000 milliseconds = 3 seconds
+        </script>
+    {% endif %}
+</div>
+<div id="notification" style="display:None; width:50%; margin:auto;">
+<!--    {% if notifications %}-->
+<!--    {% for notification in notifications %}-->
+<!--        <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-between;">-->
+<!--            <div>-->
+<!--                <h6>Leave-Start: {{notification.start}}</h6>-->
+<!--                <h6>Leave-End: {{notification.end}}</h6>-->
+<!--                <h6>Leave-Subject: {{notification.subject}}</h6>-->
+<!--                <h6>Leave-Reason: {{notification.reason}}</h6>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                {% if notification.status==None %}-->
+<!--                <h6 class="btn btn-warning">Pending</h6>-->
+<!--                {% elif notification.status=='False' %}-->
+<!--                <h6 class="btn btn-danger">Rejected</h6>-->
+<!--                {% else %}-->
+<!--                <h6 class="btn btn-success">Approved</h6>-->
+<!--                {% endif %}-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--    {% else %}-->
+<!--    <div style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-between;"><h6 style="color:red">No Notifications</h6></div>-->
+<!--    {% endif %}-->
+
+</div>
+<div id="leave" style="display:None; width:80%; margin:auto;">
+<form action="/leaves" method="post">
+        <div class="form-group">
+            <label for="leave_start">From:</label>
+            <input type="date" id="leave_start" name="leave_start" placeholder="MM-DD-YYYY" style="width: calc(100% - 85%);">
+            <label for="leave_end">To:</label>
+            <input type="date" id="leave_end" name="leave_end" placeholder="MM-DD-YYYY" style="width: calc(100% - 85%);">
+        </div>
+        <div class="form-group">
+            <label for="leave_subject">Leave Subject:</label>
+            <input type="text" id="leave_subject" name="leave_subject" placeholder="Subject">
+        </div>
+        <div class="form-group">
+            <label for="leave_reason">Description:</label>
+            <textarea id="leave_reason" name="leave_reason" rows="6" cols="130" placeholder="Leave Reason"></textarea>
+        </div>
+        <input id="emp_id" name="emp_id" value="{{emp_data.emp_id}}" style="display:None;">
+            <button type="submit">Send</button>
+<!--        <div id="send_button" class="btn btn-success">Send</div>-->
+</form>
+</div>
+<div id="attendance" style="display:None; width:80%; margin:auto;"></div>
+<div id="tasks" style="display:None; width:80%; margin:auto;">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Number</th>
+            <th scope="col">Task-Id</th>
+            <th scope="col">Task-Title</th>
+            <th scope="col">Task-Detail</th>
+            <th scope="col">Task-Status</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for task_data in tasks %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ task_data.task_id }}</td>
+                    <td>{{ task_data.task_title }}</td>
+                    <td>{{ task_data.task_details }}</td>
+                    <td>
+                    {% if task_data.status == None %}
+                        <a class="btn btn-danger" style="opacity:0.85;">pending</a>
+                        <a id="pending" class="btn btn-success" style="opacity:0.85;" href="/status_update/{{ task_data.task_id }}/{{emp_data.emp_id}}" onclick="alert('Task completed')">complete</a>
+                    {% else %}
+                        <a class="btn btn-warning" style="opacity:0.50;">Completed</a>
+                    {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="{{ url_for('static', filename='/js/employee.js') }}" type="text/javascript"></script>
+
+
+</body>
+</html>
